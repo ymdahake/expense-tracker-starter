@@ -16,13 +16,19 @@ No test framework is configured in this project.
 
 ## Architecture
 
-This is a minimal React + Vite single-page app. All application logic lives in a single file:
+This is a minimal React + Vite single-page app. The `transactions` array is the only shared state and lives in `App`. It flows down as props; nothing is lifted back up except via callbacks.
 
-- **`src/App.jsx`** — the entire app: state management, filtering logic, form handling, and rendering. No components are extracted; everything is in one monolithic `App` component.
+### Component tree
 
-### Known bugs (intentional, part of the course)
+```
+App                          — holds transactions state, passes it down
+├── Summary                  — receives transactions, computes totals internally
+├── TransactionForm          — owns its own form state, calls onAdd(transaction) to add
+└── TransactionList          — receives transactions, owns filter state internally
+```
 
-- Transaction `amount` values are stored as strings (not numbers), causing the income/expense totals to concatenate instead of sum correctly.
+### Known bug (intentional, part of the course)
+
 - "Freelance Work" in the seed data is marked `type: "expense"` but categorized as `"salary"` — it should be `type: "income"`.
 
 ### State shape
@@ -31,7 +37,7 @@ This is a minimal React + Vite single-page app. All application logic lives in a
 transactions: [{ id, description, amount, type, category, date }]
 // type: "income" | "expense"
 // category: "food" | "housing" | "utilities" | "transport" | "entertainment" | "salary" | "other"
-// amount: stored as string (bug)
+// amount: number
 ```
 
 All state is in-memory only — there is no persistence layer.
